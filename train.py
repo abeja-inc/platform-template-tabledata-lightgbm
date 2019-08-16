@@ -17,12 +17,9 @@ from abeja.datalake import Client as DatalakeClient
 # Configurable, but you don't need to set this. Default is "~/.abeja/.cache" in ABEJA Platform.
 ABEJA_STORAGE_DIR_PATH = os.getenv('ABEJA_STORAGE_DIR_PATH')
 
-#DATALAKE_CHANNEL_ID = os.getenv('DATALAKE_CHANNEL_ID')
-#DATALAKE_TRAIN_ID = os.getenv('DATALAKE_TRAIN_ID')
-#DATALAKE_TEST_ID = os.getenv('DATALAKE_TEST_ID')
-DATALAKE_CHANNEL_ID = '1845004652340'
-DATALAKE_TRAIN_ID = '20190814T035550-a0942d4f-50f1-4be8-b716-287e8e944927'
-DATALAKE_TEST_ID = '20190814T035550-efc32196-6a04-420a-bbe2-e15a35fa2593'
+DATALAKE_CHANNEL_ID = os.getenv('DATALAKE_CHANNEL_ID')
+DATALAKE_TRAIN_ID = os.getenv('DATALAKE_TRAIN_ID')
+DATALAKE_TEST_ID = os.getenv('DATALAKE_TEST_ID')
 
 # params for load
 USECOLS = os.getenv('USECOLS')
@@ -33,7 +30,6 @@ if TARGET is None:
 
 # params for lgb
 PARAMS = os.getenv('PARAMS')
-#PARAMS = 'a=1,b=2,c=0.3,d=qq,e=None,f=True'
 params = {}
 for kv in PARAMS.split(','):
     k, v = kv.split('=')
