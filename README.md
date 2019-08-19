@@ -2,8 +2,8 @@
 ## Environment options
 ### DataLake
 * DATALAKE_CHANNEL_ID: DataLake channel id
-* DATALAKE_TRAIN_ID: DataLake item id
-* DATALAKE_TEST_ID: DataLake item id
+* DATALAKE_TRAIN_ITEM_ID: DataLake item id
+* DATALAKE_TEST_ITEM_ID: DataLake item id
 
 ### Features
 * INPUT_FIELDS: Names of features. e.g. var_1,var_2,var_3

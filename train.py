@@ -4,6 +4,7 @@
 import os
 import gc
 import random
+import json
 from pathlib import Path
 from math import modf
 
@@ -20,8 +21,8 @@ ABEJA_STORAGE_DIR_PATH = os.getenv('ABEJA_STORAGE_DIR_PATH')
 ABEJA_TRAINING_RESULT_DIR = os.getenv('ABEJA_TRAINING_RESULT_DIR')
 
 DATALAKE_CHANNEL_ID = os.getenv('DATALAKE_CHANNEL_ID')
-DATALAKE_TRAIN_ID = os.getenv('DATALAKE_TRAIN_ID')
-DATALAKE_TEST_ID = os.getenv('DATALAKE_TEST_ID')
+DATALAKE_TRAIN_ITEM_ID = os.getenv('DATALAKE_TRAIN_ITEM_ID')
+DATALAKE_TEST_ITEM_ID = os.getenv('DATALAKE_TEST_ITEM_ID')
 
 # params for load
 INPUT_FIELDS = os.getenv('INPUT_FIELDS')
@@ -51,9 +52,7 @@ for kv in PARAMS.split(','):
     except:
         params[k] = v
 
-NFOLD = os.getenv('NFOLD')
-if NFOLD is None:
-    NFOLD = 5
+NFOLD = int(os.getenv('NFOLD', '5'))
 
 EARLY_STOPPING_ROUNDS = os.getenv('EARLY_STOPPING_ROUNDS')
 if EARLY_STOPPING_ROUNDS is not None:
@@ -130,10 +129,10 @@ def handler(context):
     # load train
     datalake_client = DatalakeClient()
     channel = datalake_client.get_channel(DATALAKE_CHANNEL_ID)
-    datalake_file = channel.get_file(DATALAKE_TRAIN_ID)
+    datalake_file = channel.get_file(DATALAKE_TRAIN_ITEM_ID)
     datalake_file.get_content(cache=True)
     
-    csvfile = Path(ABEJA_STORAGE_DIR_PATH, DATALAKE_CHANNEL_ID, DATALAKE_TRAIN_ID)
+    csvfile = Path(ABEJA_STORAGE_DIR_PATH, DATALAKE_CHANNEL_ID, DATALAKE_TRAIN_ITEM_ID)
     if INPUT_FIELDS is None:
         train = pd.read_csv(csvfile)
     else:
@@ -166,13 +165,13 @@ def handler(context):
     del dtrain, X_train; gc.collect()
     
     # load test
-    if DATALAKE_TEST_ID is not None:
+    if DATALAKE_TEST_ITEM_ID is not None:
         datalake_client = DatalakeClient()
         channel = datalake_client.get_channel(DATALAKE_CHANNEL_ID)
-        datalake_file = channel.get_file(DATALAKE_TEST_ID)
+        datalake_file = channel.get_file(DATALAKE_TEST_ITEM_ID)
         datalake_file.get_content(cache=True)
         
-        csvfile = Path(ABEJA_STORAGE_DIR_PATH, DATALAKE_CHANNEL_ID, DATALAKE_TEST_ID)
+        csvfile = Path(ABEJA_STORAGE_DIR_PATH, DATALAKE_CHANNEL_ID, DATALAKE_TEST_ITEM_ID)
         X_test = pd.read_csv(csvfile, usecols=cols_train)[cols_train]
         
         pred = np.zeros(len(X_test))
