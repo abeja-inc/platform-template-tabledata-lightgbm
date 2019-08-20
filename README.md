@@ -31,8 +31,7 @@ Refer to https://lightgbm.readthedocs.io/en/latest/Parameters.html
 
 env name|required|default|description
 --------|--------|-------|-----------
-PARAMS|False|dict|Parameters to be passed to lgb.cv as params. e.g. num_boost_round=200,learning_rate=0.2
-Refer to https://lightgbm.readthedocs.io/en/latest/Parameters.html
+PARAMS|False|dict|Parameters to be passed to lgb.cv as params. e.g. num_boost_round=200,learning_rate=0.2 <br>Refer to https://lightgbm.readthedocs.io/en/latest/Parameters.html
 NFOLD|False|5|To be passed to nfold.
 EARLY_STOPPING_ROUNDS|False|None|to be passed to early_stopping_rounds
 VERBOSE_EVAL|False|None|To be passed to verbose_eval
