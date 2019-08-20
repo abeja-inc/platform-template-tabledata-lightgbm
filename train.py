@@ -161,7 +161,18 @@ def handler(context):
     models = extraction_cb.raw_boosters
     for i,model in enumerate(models):
         model.save_model(os.path.join(ABEJA_TRAINING_RESULT_DIR, f'model_{i}.txt'))
-        
+    
+    di = {
+            'NFOLD': NFOLD,
+            'EARLY_STOPPING_ROUNDS': EARLY_STOPPING_ROUNDS,
+            'VERBOSE_EVAL': VERBOSE_EVAL,
+            'STRATIFIED': STRATIFIED,
+            
+        }
+    lgb_env = open(os.path.join(ABEJA_TRAINING_RESULT_DIR, 'lgb_env.json'), 'w')
+    json.dump(di, lgb_env)
+    lgb_env.close()
+    
     del dtrain, X_train; gc.collect()
     
     # load test
