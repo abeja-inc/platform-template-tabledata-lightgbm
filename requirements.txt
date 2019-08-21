@@ -1,0 +1,4 @@
+abeja_sdk==0.2.7
+pandas==0.24.2
+lightgbm==2.2.3
+numpy==1.17.0
