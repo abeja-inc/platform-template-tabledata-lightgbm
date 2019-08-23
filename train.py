@@ -34,23 +34,28 @@ if TARGET_FIELD is None:
 # params for lgb
 PARAMS = os.getenv('PARAMS')
 params = {}
-for kv in PARAMS.split(','):
-    k, v = kv.split('=')
-    
-    try:
-        if v in ['True', 'False']:
-            params[k] = bool(v)
-        elif v == 'None':
-            params[k] = None
-        else:
-            # int or float
-            decimal, integer = modf(float(v))
-            if decimal == 0:
-                params[k] = int(v)
+if PARAMS is None:
+    pass
+elif len(PARAMS) == 0:
+    pass
+else:
+    for kv in PARAMS.split(','):
+        k, v = kv.split('=')
+        
+        try:
+            if v in ['True', 'False']:
+                params[k] = bool(v)
+            elif v == 'None':
+                params[k] = None
             else:
-                params[k] = float(v)
-    except:
-        params[k] = v
+                # int or float
+                decimal, integer = modf(float(v))
+                if decimal == 0:
+                    params[k] = int(v)
+                else:
+                    params[k] = float(v)
+        except:
+            params[k] = v
 
 NFOLD = int(os.getenv('NFOLD', '5'))
 
