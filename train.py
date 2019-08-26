@@ -3,7 +3,6 @@
 
 import os
 import gc
-import random
 import json
 from pathlib import Path
 from math import modf
@@ -172,6 +171,7 @@ def handler(context):
             'EARLY_STOPPING_ROUNDS': EARLY_STOPPING_ROUNDS,
             'VERBOSE_EVAL': VERBOSE_EVAL,
             'STRATIFIED': STRATIFIED,
+            'cols_train': cols_train
             
         }
     lgb_env = open(os.path.join(ABEJA_TRAINING_RESULT_DIR, 'lgb_env.json'), 'w')
