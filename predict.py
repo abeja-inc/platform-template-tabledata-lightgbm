@@ -48,10 +48,13 @@ def handler(request, context):
         
         print(pred)
         
+        df = pd.read_csv(csvfile)
+        df['pred'] = pred
+        
         return {
             'status_code': http.HTTPStatus.OK,
             'content_type': 'application/json; charset=utf8',
-            'content': {'result': pred}
+            'content': {'result': df}
         }
     except Exception as e:
         print(str(e))

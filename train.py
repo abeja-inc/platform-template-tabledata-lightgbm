@@ -43,7 +43,7 @@ else:
         
         try:
             if v in ['True', 'False']:
-                params[k] = bool(v)
+                params[k] = (v == 'True')
             elif v == 'None':
                 params[k] = None
             else:
