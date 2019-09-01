@@ -3,7 +3,6 @@
 
 import os
 import gc
-import random
 import json
 from pathlib import Path
 from math import modf
@@ -34,23 +33,28 @@ if TARGET_FIELD is None:
 # params for lgb
 PARAMS = os.getenv('PARAMS')
 params = {}
-for kv in PARAMS.split(','):
-    k, v = kv.split('=')
-    
-    try:
-        if v in ['True', 'False']:
-            params[k] = bool(v)
-        elif v == 'None':
-            params[k] = None
-        else:
-            # int or float
-            decimal, integer = modf(float(v))
-            if decimal == 0:
-                params[k] = int(v)
+if PARAMS is None:
+    pass
+elif len(PARAMS) == 0:
+    pass
+else:
+    for kv in PARAMS.split(','):
+        k, v = kv.split('=')
+        
+        try:
+            if v in ['True', 'False']:
+                params[k] = (v == 'True')
+            elif v == 'None':
+                params[k] = None
             else:
-                params[k] = float(v)
-    except:
-        params[k] = v
+                # int or float
+                decimal, integer = modf(float(v))
+                if decimal == 0:
+                    params[k] = int(v)
+                else:
+                    params[k] = float(v)
+        except:
+            params[k] = v
 
 NFOLD = int(os.getenv('NFOLD', '5'))
 
@@ -167,6 +171,7 @@ def handler(context):
             'EARLY_STOPPING_ROUNDS': EARLY_STOPPING_ROUNDS,
             'VERBOSE_EVAL': VERBOSE_EVAL,
             'STRATIFIED': STRATIFIED,
+            'cols_train': cols_train
             
         }
     lgb_env = open(os.path.join(ABEJA_TRAINING_RESULT_DIR, 'lgb_env.json'), 'w')
