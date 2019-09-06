@@ -48,13 +48,13 @@ def handler(request, context):
         
         print(pred)
         
-        df = pd.read_csv(csvfile)
-        df['pred'] = pred
+        X_test['pred'] = pred
         
         return {
             'status_code': http.HTTPStatus.OK,
             'content_type': 'application/json; charset=utf8',
-            'content': {'result': df}
+            'content': {'result': X_test.values, 
+                        'field': X_test.columns.tolist()}
         }
     except Exception as e:
         print(str(e))
