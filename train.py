@@ -113,6 +113,7 @@ def handler(context):
            verbose_eval=Parameters.VERBOSE_EVAL,
            stratified=Parameters.STRATIFIED,
            callbacks=callbacks,
+           metrics=Parameters.METRIC,
            seed=Parameters.SEED)
     
     models = extraction_cb.raw_boosters
