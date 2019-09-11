@@ -135,5 +135,5 @@ class Parameters:
     @classmethod
     def as_params(cls):
         return {
-            k.lower(): v for k, v in cls.as_dict()
+            k.lower(): v for k, v in cls.as_dict().items()
         }
