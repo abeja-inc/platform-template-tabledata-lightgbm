@@ -125,8 +125,11 @@ class Parameters:
             k: v for k, v in cls.__dict__.items()
             if k.isupper()
         }
-        if rtn["BOOSTING"] == "rf" and rtn["BAGGING_FREQ"] == 0:
-            rtn["BAGGING_FREQ"] = 5
+        if rtn["BOOSTING"] == "rf":
+            if rtn["BAGGING_FREQ"] == 0:
+                rtn["BAGGING_FREQ"] = 5
+            if rtn["BAGGING_FRACTION"] == 1:
+                rtn["BAGGING_FRACTION"] = 0.5
         if rtn["OBJECTIVE"] != "binary":
             rtn.pop("POS_BAGGING_FRACTION", None)
             rtn.pop("NEG_BAGGING_FRACTION", None)
