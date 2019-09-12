@@ -146,11 +146,17 @@ def handler(context):
         
         csvfile = Path(ABEJA_STORAGE_DIR_PATH, DATALAKE_CHANNEL_ID, DATALAKE_TEST_FILE_ID)
         X_test = pd.read_csv(csvfile, usecols=cols_train)[cols_train]
-        
-        pred = np.zeros(len(X_test))
+
+        is_multi = Parameters.OBJECTIVE.startswith("multi")
+        if is_multi:
+            pred = np.zeros((len(X_test), Parameters.NUM_CLASS))
+        else:
+            pred = np.zeros(len(X_test))
         for model in models:
             pred += model.predict(X_test)
         pred /= len(models)
+        if is_multi:
+            pred = np.argmax(pred, axis=1)
         
         print(pred)
     

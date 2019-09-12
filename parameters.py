@@ -67,7 +67,8 @@ class Parameters:
     _OBJECTIVE_LIST = [
         "regression", "regression_l1", "huber", "fair", "poisson", "quantile", "mape",
         "gamma", "tweedie", "binary",
-        # "multiclass", "multiclassova", "cross_entropy", "cross_entropy_lambda", "lambdarank"  # TODO
+        "multiclass", "multiclassova",
+        # "cross_entropy", "cross_entropy_lambda", "lambdarank"  # TODO
     ]
     OBJECTIVE = get_env_var_validate('OBJECTIVE', str, "regression", list_=_OBJECTIVE_LIST)
     _BOOSTING_LIST = [
@@ -101,15 +102,20 @@ class Parameters:
     VERBOSITY = get_env_var('VERBOSITY', int, 1)
     MAX_BIN = get_env_var_validate('MAX_BIN', int, 255, min_=2)
 
+    # Objective Parameters
+    NUM_CLASS = get_env_var_validate('NUM_CLASS', int, 1, min_=1)
+
     # Metric Parameters
     _METRIC_LIST = [
         "", "None", "l1", "l2", "rmse", "quantile", "mape", "huber", "fair",
         "poisson", "gamma", "gamma_deviance", "tweedie", "ndcg", "map", "auc",
         "binary_logloss", "binary_error",
-        # "multi_logloss", "multi_error",
         "cross_entropy", "cross_entropy_lambda", "kullback_leibler"
     ]
-    METRIC = get_env_var_metric('METRIC', _METRIC_LIST)
+    _METRIC_MULTI_LIST = [
+        "", "None", "multi_logloss", "multi_error",
+    ]
+    METRIC = get_env_var_metric('METRIC', _METRIC_MULTI_LIST if OBJECTIVE.startswith("multi") else _METRIC_LIST)
     METRIC_FREQ = get_env_var_validate('METRIC_FREQ', int, 1, min_=1)
 
     # Other Parameters
@@ -135,6 +141,8 @@ class Parameters:
         if rtn["OBJECTIVE"] != "binary":
             rtn.pop("POS_BAGGING_FRACTION", None)
             rtn.pop("NEG_BAGGING_FRACTION", None)
+        if not rtn["OBJECTIVE"].startswith("multi"):
+            rtn.pop("NUM_CLASS", None)
         return rtn
 
     @classmethod
@@ -145,7 +153,7 @@ class Parameters:
         for key in [
             "input_fields", "metric", "abeja_storage_dir_path", "stratified",
             "nfold", "datalake_train_file_id", "label_field", "abeja_training_result_dir",
-            "datalake_channel_id"
+            "datalake_channel_id", "datalake_test_file_id"
         ]:
             rtn.pop(key, None)
         return rtn

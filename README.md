@@ -26,7 +26,7 @@ More tuning tips are available on [https://lightgbm.readthedocs.io/en/latest/Par
 
 env name|required|default|description
 --------|--------|-------|-----------
-OBJECTIVE|True|regression|Currently `regression` and `binary` applications are supported. <br>Must be one of `[regression, regression_l1, huber, fair, poisson, quantile, mape, gamma, tweedie, binary]`.
+OBJECTIVE|True|regression|Currently `regression` and `binary` applications are supported. <br>Must be one of `[regression, regression_l1, huber, fair, poisson, quantile, mape, gamma, tweedie, binary, multiclass, multiclassova]`.
 BOOSTING|True|gbdt|Must be one of `[gbdt, rf]`
 NUM_ITERATIONS|True|100|Number of boosting iterations. constraints: `NUM_ITERATIONS >= 0`
 LEARNING_RATE|True|0.05|Shrinkage rate. constraints: `LEARNING_RATE > 0.0`
@@ -48,6 +48,7 @@ FEATURE_FRACTION_SEED|False|3|Random seed for `FEATURE_FRACTION`.
 EARLY_STOPPING_ROUNDS|False|10|Will stop training if one metric of one validation data doesn’t improve in last `EARLY_STOPPING_ROUNDS` rounds.
 VERBOSITY|False|1|Controls the level of LightGBM’s verbosity. `< 0`: Fatal, `= 0`: Error (Warning), `= 1`: Info, `> 1`: Debug
 MAX_BIN|False|255|Max number of bins that feature values will be bucketed in. Small number of bins may reduce training accuracy but may increase general power (deal with over-fitting). constraints: `MAX_BIN > 1`
+NUM_CLASS|False|1|Number of classes. Used only in `multi-class` classification applications. constraints: `NUM_CLASS > 0`
 METRIC|False|""|Metric. Support multiple metrics, separated by `,`
 METRIC_FREQ|False|1|Frequency for metric output. constraints: `METRIC_FREQ > 0`
 NFOLD|False|5|Number of folds in CV.
