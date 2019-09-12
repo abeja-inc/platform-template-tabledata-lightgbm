@@ -17,6 +17,7 @@ with open(os.path.join(ABEJA_TRAINING_RESULT_DIR, 'lgb_env.json')) as f:
     NFOLD = lgb_env.get('NFOLD')
     cols_train = lgb_env.get('cols_train')
     OBJECTIVE = lgb_env.get('OBJECTIVE')
+    IS_MULTI = OBJECTIVE.startswith("multi")
     NUM_CLASS = lgb_env.get('NUM_CLASS', 1)
 
 models = []
@@ -42,7 +43,7 @@ def handler(request, context):
         
         X_test = pd.read_csv(csvfile, usecols=cols_train)[cols_train]
 
-        if OBJECTIVE.startswith("multi"):
+        if IS_MULTI:
             pred = np.zeros((len(X_test), NUM_CLASS))
         else:
             pred = np.zeros(len(X_test))
@@ -53,7 +54,7 @@ def handler(request, context):
         if OBJECTIVE == 'binary':
             pred[pred >= 0.5] = 1
             pred[pred < 0.5] = 0
-        elif OBJECTIVE.startswith("multi"):
+        elif IS_MULTI:
             pred = np.argmax(pred, axis=1)
         
         print(pred)
