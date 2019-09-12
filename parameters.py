@@ -46,7 +46,10 @@ def get_env_var_metric(key, list_):
     for value in values:
         if value not in list_:
             raise Exception(f'"{key}" must be one of [{",".join(list_)}]')
-    return ",".join(values)
+    rtn = ",".join(values)
+    if rtn:
+        return rtn
+    return None
 
 
 class Parameters:
