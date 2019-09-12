@@ -17,6 +17,7 @@ with open(os.path.join(ABEJA_TRAINING_RESULT_DIR, 'lgb_env.json')) as f:
     NFOLD = lgb_env.get('NFOLD')
     cols_train = lgb_env.get('cols_train')
     OBJECTIVE = lgb_env.get('OBJECTIVE')
+    NUM_CLASS = lgb_env.get('', 1)
 
 models = []
 for i in range(NFOLD):
@@ -40,8 +41,11 @@ def handler(request, context):
         csvfile = BytesIO(data)
         
         X_test = pd.read_csv(csvfile, usecols=cols_train)[cols_train]
-        
-        pred = np.zeros(len(X_test))
+
+        if OBJECTIVE.startswith("multi"):
+            pred = np.zeros((len(X_test), NUM_CLASS))
+        else:
+            pred = np.zeros(len(X_test))
         for model in models:
             pred += model.predict(X_test)
         pred /= len(models)
