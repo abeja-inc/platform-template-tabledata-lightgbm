@@ -122,7 +122,7 @@ class Parameters:
     def as_dict(cls):
         rtn = {
             k: v for k, v in cls.__dict__.items()
-            if k.isupper()
+            if k.isupper() and not k.startswith("_")
         }
         if rtn["BOOSTING"] == "rf":
             if rtn["BAGGING_FREQ"] == 0:
@@ -136,6 +136,13 @@ class Parameters:
 
     @classmethod
     def as_params(cls):
-        return {
+        rtn = {
             k.lower(): v for k, v in cls.as_dict().items()
         }
+        for key in [
+            "input_fields", "metric", "abeja_storage_dir_path", "stratified",
+            "nfold", "datalake_train_file_id", "label_field", "abeja_training_result_dir",
+            "datalake_channel_id"
+        ]:
+            rtn.pop(key, None)
+        return rtn
