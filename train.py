@@ -5,13 +5,14 @@ import os
 import gc
 import json
 from pathlib import Path
-from math import modf
 
 import pandas as pd
 import numpy as np
 import lightgbm as lgb
 from abeja.datalake import Client as DatalakeClient
+from tensorboardX import SummaryWriter
 
+from callbacks import Statistics, TensorBoardCallback
 from parameters import Parameters
 
 
@@ -23,6 +24,11 @@ DATALAKE_TEST_FILE_ID = Parameters.DATALAKE_TEST_FILE_ID
 INPUT_FIELDS = Parameters.INPUT_FIELDS
 LABEL_FIELD = Parameters.LABEL_FIELD
 PARAMS = Parameters.as_params()
+
+statistics = Statistics(Parameters.NUM_ITERATIONS)
+
+log_path = os.path.join(ABEJA_TRAINING_RESULT_DIR, 'logs')
+writer = SummaryWriter(log_dir=log_path)
 
 
 # =============================================================================
@@ -106,7 +112,8 @@ def handler(context):
     dtrain = lgb.Dataset(X_train, y_train)
     
     extraction_cb = ModelExtractionCallback()
-    callbacks = [extraction_cb,]
+    tensorboard_cb = TensorBoardCallback(statistics, writer)
+    callbacks = [extraction_cb, tensorboard_cb,]
     
     lgb.cv(PARAMS, dtrain, nfold=Parameters.NFOLD,
            early_stopping_rounds=Parameters.EARLY_STOPPING_ROUNDS,
