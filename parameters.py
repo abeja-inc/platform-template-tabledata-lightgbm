@@ -153,7 +153,7 @@ class Parameters:
         for key in [
             "input_fields", "metric", "abeja_storage_dir_path", "stratified",
             "nfold", "datalake_train_file_id", "label_field", "abeja_training_result_dir",
-            "datalake_channel_id"
+            "datalake_channel_id", "datalake_test_file_id"
         ]:
             rtn.pop(key, None)
         return rtn
