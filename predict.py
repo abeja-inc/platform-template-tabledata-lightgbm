@@ -17,7 +17,7 @@ with open(os.path.join(ABEJA_TRAINING_RESULT_DIR, 'lgb_env.json')) as f:
     NFOLD = lgb_env.get('NFOLD')
     cols_train = lgb_env.get('cols_train')
     OBJECTIVE = lgb_env.get('OBJECTIVE')
-    NUM_CLASS = lgb_env.get('', 1)
+    NUM_CLASS = lgb_env.get('NUM_CLASS', 1)
 
 models = []
 for i in range(NFOLD):
