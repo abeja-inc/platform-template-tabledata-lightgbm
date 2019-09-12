@@ -43,10 +43,9 @@ POS_BAGGING_FRACTION|False|1.0|Used only in `binary` application. Used for imbal
 NEG_BAGGING_FRACTION|False|1.0|Used only in `binary` application. Same as `POS_BAGGING_FRACTION`.
 BAGGING_FREQ|False|0|Frequency for bagging. `0` means disable bagging; `k` means perform bagging at every `k` iteration.
 BAGGING_SEED|False|3|Random seed for bagging.
-FEATURE_FRACTION_BYNODE|False|False|Set this to `true` to randomly select part of features for each node. Set this to `false` to randomly select part of features for each tree (use the same sub features for each tree).
 FEATURE_FRACTION|False|1.0|LightGBM will randomly select part of features on each iteration if `FEATURE_FRACTION` smaller than `1.0`. For example, if you set it to `0.8`, LightGBM will select 80% of features before training each tree. constraints: `0.0 < FEATURE_FRACTION <= 1.0`.
 FEATURE_FRACTION_SEED|False|3|Random seed for `FEATURE_FRACTION`.
-EARLY_STOPPING_ROUNDS|False|0|Will stop training if one metric of one validation data doesn’t improve in last `EARLY_STOPPING_ROUNDS` rounds.
+EARLY_STOPPING_ROUNDS|False|10|Will stop training if one metric of one validation data doesn’t improve in last `EARLY_STOPPING_ROUNDS` rounds.
 VERBOSITY|False|1|Controls the level of LightGBM’s verbosity. `< 0`: Fatal, `= 0`: Error (Warning), `= 1`: Info, `> 1`: Debug
 MAX_BIN|False|255|Max number of bins that feature values will be bucketed in. Small number of bins may reduce training accuracy but may increase general power (deal with over-fitting). constraints: `MAX_BIN > 1`
 METRIC|False|""|Metric. Support multiple metrics, separated by `,`

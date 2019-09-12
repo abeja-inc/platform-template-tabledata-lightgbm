@@ -46,7 +46,10 @@ def get_env_var_metric(key, list_):
     for value in values:
         if value not in list_:
             raise Exception(f'"{key}" must be one of [{",".join(list_)}]')
-    return ",".join(values)
+    rtn = ",".join(values)
+    if rtn:
+        return rtn
+    return None
 
 
 class Parameters:
@@ -90,10 +93,9 @@ class Parameters:
     NEG_BAGGING_FRACTION = get_env_var_validate('NEG_BAGGING_FRACTION', float, 1, min_=1e-10, max_=1)
     BAGGING_FREQ = get_env_var('BAGGING_FREQ', int, 0)
     BAGGING_SEED = get_env_var('BAGGING_SEED', int, 3)
-    FEATURE_FRACTION_BYNODE = get_env_var_bool('FEATURE_FRACTION_BYNODE', False)
     FEATURE_FRACTION = get_env_var_validate('FEATURE_FRACTION', float, 1, min_=1e-10, max_=1)
     FEATURE_FRACTION_SEED = get_env_var('FEATURE_FRACTION_SEED', int, 2)
-    EARLY_STOPPING_ROUNDS = get_env_var('EARLY_STOPPING_ROUNDS', int, 0)
+    EARLY_STOPPING_ROUNDS = get_env_var('EARLY_STOPPING_ROUNDS', int, 10)
 
     # IO Parameters
     VERBOSITY = get_env_var('VERBOSITY', int, 1)
@@ -123,7 +125,7 @@ class Parameters:
     def as_dict(cls):
         rtn = {
             k: v for k, v in cls.__dict__.items()
-            if k.isupper()
+            if k.isupper() and not k.startswith("_")
         }
         if rtn["BOOSTING"] == "rf":
             if rtn["BAGGING_FREQ"] == 0:
@@ -137,6 +139,13 @@ class Parameters:
 
     @classmethod
     def as_params(cls):
-        return {
+        rtn = {
             k.lower(): v for k, v in cls.as_dict().items()
         }
+        for key in [
+            "input_fields", "metric", "abeja_storage_dir_path", "stratified",
+            "nfold", "datalake_train_file_id", "label_field", "abeja_training_result_dir",
+            "datalake_channel_id"
+        ]:
+            rtn.pop(key, None)
+        return rtn
