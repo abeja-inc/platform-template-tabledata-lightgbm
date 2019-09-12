@@ -151,6 +151,8 @@ def handler(context):
         for model in models:
             pred += model.predict(X_test)
         pred /= len(models)
+        if Parameters.OBJECTIVE.startswith("multi"):
+            pred = np.argmax(pred, axis=1)
         
         print(pred)
     

@@ -49,6 +49,8 @@ def handler(request, context):
         if OBJECTIVE == 'binary':
             pred[pred >= 0.5] = 1
             pred[pred < 0.5] = 0
+        elif OBJECTIVE.startswith("multi"):
+            pred = np.argmax(pred, axis=1)
         
         print(pred)
         
