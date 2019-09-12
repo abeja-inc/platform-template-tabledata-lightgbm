@@ -90,7 +90,6 @@ class Parameters:
     NEG_BAGGING_FRACTION = get_env_var_validate('NEG_BAGGING_FRACTION', float, 1, min_=1e-10, max_=1)
     BAGGING_FREQ = get_env_var('BAGGING_FREQ', int, 0)
     BAGGING_SEED = get_env_var('BAGGING_SEED', int, 3)
-    FEATURE_FRACTION_BYNODE = get_env_var_bool('FEATURE_FRACTION_BYNODE', False)
     FEATURE_FRACTION = get_env_var_validate('FEATURE_FRACTION', float, 1, min_=1e-10, max_=1)
     FEATURE_FRACTION_SEED = get_env_var('FEATURE_FRACTION_SEED', int, 2)
     EARLY_STOPPING_ROUNDS = get_env_var('EARLY_STOPPING_ROUNDS', int, 10)
