@@ -138,7 +138,7 @@ def handler(context):
     del dtrain, X_train; gc.collect()
     
     # load test
-    if DATALAKE_TEST_FILE_ID is not None:
+    if DATALAKE_TEST_FILE_ID:
         datalake_client = DatalakeClient()
         channel = datalake_client.get_channel(DATALAKE_CHANNEL_ID)
         datalake_file = channel.get_file(DATALAKE_TEST_FILE_ID)
