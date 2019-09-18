@@ -2,6 +2,8 @@ from logging import getLogger
 
 from abeja.train.client import Client
 from abeja.train.statistics import Statistics as ABEJAStatistics
+import numpy as np
+from sklearn.metrics import accuracy_score, roc_auc_score
 from tensorboardX import SummaryWriter
 
 logger = getLogger('callback')
@@ -42,15 +44,49 @@ class TensorBoardCallback(object):
     def __init__(self, statistics: Statistics, writer: SummaryWriter):
         self.statistics = statistics
         self.writer = writer
+        self._X_val = None
+        self._y_val = None
+        self._is_multi = None
+        self._num_class = None
+        self._evaluate = None
 
     def __call__(self, env):
         epoch = env.iteration
-        epoch_train_loss = None
+        epoch_train_loss = 0.0
+        epoch_val_acc = 0.0
         if env.evaluation_result_list:
             # FIXME: Currently use the first loss value.
             _, _, epoch_train_loss, _, _ = env.evaluation_result_list[0]
 
+        if self._X_val is not None:
+            if self._is_multi:
+                pred = np.zeros((len(self._X_val), self._num_class))
+            else:
+                pred = np.zeros(len(self._X_val))
+
+            models = env.model.boosters
+            for model in models:
+                pred += model.predict(self._X_val)
+
+            if self._is_multi:
+                pred = np.argmax(pred, axis=1)
+            else:
+                pred /= len(models)
+            epoch_val_acc = self._evaluate(self._y_val, pred)
+
         print('-------------')
-        print('epoch {} || Epoch_TRAIN_Loss:{:.4f}'.format(epoch + 1, epoch_train_loss))
-        self.statistics(epoch + 1, epoch_train_loss, None, None, None)
+        print('epoch {} || Epoch_TRAIN_Loss:{:.4f} || Epoch_VAL_Score]:{:.4f}'.format(
+            epoch + 1, epoch_train_loss, epoch_val_acc))
+        self.statistics(epoch + 1, epoch_train_loss, None, None, epoch_val_acc)
         self.writer.add_scalar('main/loss', epoch_train_loss, epoch + 1)
+        self.writer.add_scalar('test/acc', epoch_val_acc, epoch + 1)
+
+    def set_valid(self, X_val, y_val, is_multi: bool, num_class: int):
+        self._X_val = X_val
+        self._y_val = y_val
+        self._is_multi = is_multi
+        self._num_class = num_class
+        if is_multi:
+            self._evaluate = accuracy_score
+        else:
+            self._evaluate = roc_auc_score
