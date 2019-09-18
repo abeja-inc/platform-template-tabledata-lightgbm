@@ -13,19 +13,22 @@ from abeja.datalake import Client as DatalakeClient
 from tensorboardX import SummaryWriter
 
 from callbacks import Statistics, TensorBoardCallback
+from data_loader import train_data_loader
 from parameters import Parameters
 
 
-ABEJA_STORAGE_DIR_PATH = Parameters.ABEJA_STORAGE_DIR_PATH
-ABEJA_TRAINING_RESULT_DIR = Parameters.ABEJA_TRAINING_RESULT_DIR
+ABEJA_STORAGE_DIR_PATH = os.getenv('ABEJA_STORAGE_DIR_PATH', '~/.abeja/.cache')
+ABEJA_TRAINING_RESULT_DIR = os.getenv('ABEJA_TRAINING_RESULT_DIR', 'abejainc_training_result')
 Path(ABEJA_TRAINING_RESULT_DIR).mkdir(exist_ok=True)
 
 DATALAKE_CHANNEL_ID = Parameters.DATALAKE_CHANNEL_ID
 DATALAKE_TRAIN_FILE_ID = Parameters.DATALAKE_TRAIN_FILE_ID
-DATALAKE_TEST_FILE_ID = Parameters.DATALAKE_TEST_FILE_ID
+DATALAKE_VAL_FILE_ID = Parameters.DATALAKE_VAL_FILE_ID
 INPUT_FIELDS = Parameters.INPUT_FIELDS
 LABEL_FIELD = Parameters.LABEL_FIELD
 PARAMS = Parameters.as_params()
+
+IS_MULTI = Parameters.OBJECTIVE.startswith("multi")
 
 statistics = Statistics(Parameters.NUM_ITERATIONS)
 
@@ -91,30 +94,20 @@ class ModelExtractionCallback(object):
 
 def handler(context):
     print(f'start training with parameters : {Parameters.as_dict()}, context : {context}')
-    
-    # load train
-    datalake_client = DatalakeClient()
-    channel = datalake_client.get_channel(DATALAKE_CHANNEL_ID)
-    datalake_file = channel.get_file(DATALAKE_TRAIN_FILE_ID)
-    datalake_file.get_content(cache=True)
-    
-    csvfile = Path(ABEJA_STORAGE_DIR_PATH, DATALAKE_CHANNEL_ID, DATALAKE_TRAIN_FILE_ID)
-    if INPUT_FIELDS:
-        train = pd.read_csv(csvfile, usecols=INPUT_FIELDS+[LABEL_FIELD])
-    else:
-        train = pd.read_csv(csvfile)
 
-    y_train = train[LABEL_FIELD].values
-    cols_drop = [c for c in train.columns if train[c].dtype == 'O'] + [LABEL_FIELD]
-    train.drop(cols_drop, axis=1, inplace=True)
-    X_train = train
-    cols_train = X_train.columns.tolist()
-    del train
-    
+    X_train, y_train, cols_train = train_data_loader(
+        DATALAKE_CHANNEL_ID, DATALAKE_TRAIN_FILE_ID, LABEL_FIELD, INPUT_FIELDS)
     dtrain = lgb.Dataset(X_train, y_train)
-    
+
+    if DATALAKE_VAL_FILE_ID:
+        X_val, y_val, _ = train_data_loader(
+            DATALAKE_CHANNEL_ID, DATALAKE_VAL_FILE_ID, LABEL_FIELD, INPUT_FIELDS)
+    else:
+        X_val, y_val = None, None
+
     extraction_cb = ModelExtractionCallback()
     tensorboard_cb = TensorBoardCallback(statistics, writer)
+    tensorboard_cb.set_valid(X_val, y_val, IS_MULTI, Parameters.NUM_CLASS)
     callbacks = [extraction_cb, tensorboard_cb,]
     
     lgb.cv(PARAMS, dtrain, nfold=Parameters.NFOLD,
@@ -136,32 +129,7 @@ def handler(context):
     lgb_env = open(os.path.join(ABEJA_TRAINING_RESULT_DIR, 'lgb_env.json'), 'w')
     json.dump(di, lgb_env)
     lgb_env.close()
-    
-    del dtrain, X_train; gc.collect()
-    
-    # load test
-    if DATALAKE_TEST_FILE_ID:
-        datalake_client = DatalakeClient()
-        channel = datalake_client.get_channel(DATALAKE_CHANNEL_ID)
-        datalake_file = channel.get_file(DATALAKE_TEST_FILE_ID)
-        datalake_file.get_content(cache=True)
-        
-        csvfile = Path(ABEJA_STORAGE_DIR_PATH, DATALAKE_CHANNEL_ID, DATALAKE_TEST_FILE_ID)
-        X_test = pd.read_csv(csvfile, usecols=cols_train)[cols_train]
 
-        is_multi = Parameters.OBJECTIVE.startswith("multi")
-        if is_multi:
-            pred = np.zeros((len(X_test), Parameters.NUM_CLASS))
-        else:
-            pred = np.zeros(len(X_test))
-        for model in models:
-            pred += model.predict(X_test)
-        pred /= len(models)
-        if is_multi:
-            pred = np.argmax(pred, axis=1)
-        
-        print(pred)
-    
 
 if __name__ == '__main__':
     handler(None)
