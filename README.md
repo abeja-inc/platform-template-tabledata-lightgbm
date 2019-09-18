@@ -5,7 +5,7 @@ env name|required|default|description
 --------|--------|-------|-----------
 DATALAKE_CHANNEL_ID|True|None|DataLake channel id
 DATALAKE_TRAIN_FILE_ID|True|None|DataLake file id for training
-DATALAKE_TEST_FILE_ID|False|None|DataLake file id for testing
+DATALAKE_VAL_FILE_ID|False|None|DataLake file id for validating
 
 ### Features
 env name|required|default|description

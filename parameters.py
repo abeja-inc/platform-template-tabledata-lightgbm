@@ -61,7 +61,7 @@ class Parameters:
     """
     DATALAKE_CHANNEL_ID = get_env_var_required('DATALAKE_CHANNEL_ID', str)
     DATALAKE_TRAIN_FILE_ID = get_env_var_required('DATALAKE_TRAIN_FILE_ID', str)
-    DATALAKE_TEST_FILE_ID = os.getenv('DATALAKE_TEST_FILE_ID')
+    DATALAKE_VAL_FILE_ID = os.getenv('DATALAKE_VAL_FILE_ID')
 
     INPUT_FIELDS = get_env_var_csv('INPUT_FIELDS', str)
     LABEL_FIELD = get_env_var_required('LABEL_FIELD', str)
@@ -126,10 +126,6 @@ class Parameters:
     STRATIFIED = get_env_var_bool('STRATIFIED', True)
     NFOLD = get_env_var_validate('NFOLD', int, default=5, min_=2, max_=None)
 
-    # ABEJA Platform environment variables
-    ABEJA_STORAGE_DIR_PATH = os.getenv('ABEJA_STORAGE_DIR_PATH', '~/.abeja/.cache')
-    ABEJA_TRAINING_RESULT_DIR = os.getenv('ABEJA_TRAINING_RESULT_DIR', 'abejainc_training_result')
-
     @classmethod
     def as_dict(cls):
         rtn = {
@@ -154,9 +150,9 @@ class Parameters:
             k.lower(): v for k, v in cls.as_dict().items()
         }
         for key in [
-            "input_fields", "metric", "abeja_storage_dir_path", "stratified",
-            "nfold", "datalake_train_file_id", "label_field", "abeja_training_result_dir",
-            "datalake_channel_id", "datalake_test_file_id"
+            "input_fields", "metric", "stratified",
+            "nfold", "datalake_train_file_id", "label_field",
+            "datalake_channel_id", "datalake_val_file_id"
         ]:
             rtn.pop(key, None)
         return rtn

@@ -16,13 +16,13 @@ from callbacks import Statistics, TensorBoardCallback
 from parameters import Parameters
 
 
-ABEJA_STORAGE_DIR_PATH = Parameters.ABEJA_STORAGE_DIR_PATH
-ABEJA_TRAINING_RESULT_DIR = Parameters.ABEJA_TRAINING_RESULT_DIR
+ABEJA_STORAGE_DIR_PATH = os.getenv('ABEJA_STORAGE_DIR_PATH', '~/.abeja/.cache')
+ABEJA_TRAINING_RESULT_DIR = os.getenv('ABEJA_TRAINING_RESULT_DIR', 'abejainc_training_result')
 Path(ABEJA_TRAINING_RESULT_DIR).mkdir(exist_ok=True)
 
 DATALAKE_CHANNEL_ID = Parameters.DATALAKE_CHANNEL_ID
 DATALAKE_TRAIN_FILE_ID = Parameters.DATALAKE_TRAIN_FILE_ID
-DATALAKE_TEST_FILE_ID = Parameters.DATALAKE_TEST_FILE_ID
+DATALAKE_VAL_FILE_ID = Parameters.DATALAKE_VAL_FILE_ID
 INPUT_FIELDS = Parameters.INPUT_FIELDS
 LABEL_FIELD = Parameters.LABEL_FIELD
 PARAMS = Parameters.as_params()
