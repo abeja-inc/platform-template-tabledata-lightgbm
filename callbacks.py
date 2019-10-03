@@ -3,8 +3,9 @@ from logging import getLogger
 from abeja.train.client import Client
 from abeja.train.statistics import Statistics as ABEJAStatistics
 import numpy as np
-from sklearn.metrics import accuracy_score, roc_auc_score
 from tensorboardX import SummaryWriter
+
+from utils import accuracy_score, roc_auc_score, root_mean_squared_error
 
 logger = getLogger('callback')
 
@@ -54,6 +55,7 @@ class TensorBoardCallback(object):
         epoch = env.iteration
         epoch_train_loss = 0.0
         epoch_val_acc = 0.0
+        epoch_val_loss = 0.0
         if env.evaluation_result_list:
             # FIXME: Currently use the first loss value.
             _, _, epoch_train_loss, _, _ = env.evaluation_result_list[0]
@@ -72,21 +74,24 @@ class TensorBoardCallback(object):
                 pred = np.argmax(pred, axis=1)
             else:
                 pred /= len(models)
-            epoch_val_acc = self._evaluate(self._y_val, pred)
+            epoch_val_acc, epoch_val_loss = self._evaluate(self._y_val, pred)
 
         print('-------------')
-        print('epoch {} || Epoch_TRAIN_Loss:{:.4f} || Epoch_VAL_Score]:{:.4f}'.format(
-            epoch + 1, epoch_train_loss, epoch_val_acc))
-        self.statistics(epoch + 1, epoch_train_loss, None, None, epoch_val_acc)
+        print('epoch {} || Epoch_TRAIN_Loss:{:.4f} || Epoch_VAL_Score]:{:.4f} || Epoch_VAL_Loss]:{:.4f}'.format(
+            epoch + 1, epoch_train_loss, epoch_val_acc, epoch_val_loss))
+        self.statistics(epoch + 1, epoch_train_loss, None, epoch_val_loss, epoch_val_acc)
         self.writer.add_scalar('main/loss', epoch_train_loss, epoch + 1)
         self.writer.add_scalar('test/acc', epoch_val_acc, epoch + 1)
+        self.writer.add_scalar('test/loss', epoch_val_loss, epoch + 1)
 
-    def set_valid(self, X_val, y_val, is_multi: bool, num_class: int):
+    def set_valid(self, X_val, y_val, is_classification: bool, is_multi: bool, num_class: int):
         self._X_val = X_val
         self._y_val = y_val
         self._is_multi = is_multi
         self._num_class = num_class
-        if is_multi:
+        if not is_classification:
+            self._evaluate = root_mean_squared_error
+        elif is_multi:
             self._evaluate = accuracy_score
         else:
             self._evaluate = roc_auc_score

@@ -2,14 +2,10 @@
 # Template: 
 
 import os
-import gc
 import json
 from pathlib import Path
 
-import pandas as pd
-import numpy as np
 import lightgbm as lgb
-from abeja.datalake import Client as DatalakeClient
 from tensorboardX import SummaryWriter
 
 from callbacks import Statistics, TensorBoardCallback
@@ -28,6 +24,7 @@ INPUT_FIELDS = Parameters.INPUT_FIELDS
 LABEL_FIELD = Parameters.LABEL_FIELD
 PARAMS = Parameters.as_params()
 
+STRATIFIED = True if Parameters.STRATIFIED and Parameters.IS_CLASSIFICATION else False
 IS_MULTI = Parameters.OBJECTIVE.startswith("multi")
 
 statistics = Statistics(Parameters.NUM_ITERATIONS)
@@ -107,13 +104,13 @@ def handler(context):
 
     extraction_cb = ModelExtractionCallback()
     tensorboard_cb = TensorBoardCallback(statistics, writer)
-    tensorboard_cb.set_valid(X_val, y_val, IS_MULTI, Parameters.NUM_CLASS)
+    tensorboard_cb.set_valid(X_val, y_val, Parameters.IS_CLASSIFICATION, IS_MULTI, Parameters.NUM_CLASS)
     callbacks = [extraction_cb, tensorboard_cb,]
     
     lgb.cv(PARAMS, dtrain, nfold=Parameters.NFOLD,
            early_stopping_rounds=Parameters.EARLY_STOPPING_ROUNDS,
            verbose_eval=Parameters.VERBOSE_EVAL,
-           stratified=Parameters.STRATIFIED,
+           stratified=STRATIFIED,
            callbacks=callbacks,
            metrics=Parameters.METRIC,
            seed=Parameters.SEED)

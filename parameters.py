@@ -74,6 +74,7 @@ class Parameters:
         # "cross_entropy", "cross_entropy_lambda", "lambdarank"  # TODO
     ]
     OBJECTIVE = get_env_var_validate('OBJECTIVE', str, "regression", list_=_OBJECTIVE_LIST)
+    IS_CLASSIFICATION = get_env_var_bool('IS_CLASSIFICATION', True)
     _BOOSTING_LIST = [
         "gbdt", "rf",
         # "dart", "goss"
@@ -150,7 +151,7 @@ class Parameters:
             k.lower(): v for k, v in cls.as_dict().items()
         }
         for key in [
-            "input_fields", "metric", "stratified",
+            "input_fields", "is_classification", "metric", "stratified",
             "nfold", "datalake_train_file_id", "label_field",
             "datalake_channel_id", "datalake_val_file_id"
         ]:
