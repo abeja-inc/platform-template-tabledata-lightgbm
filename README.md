@@ -27,6 +27,7 @@ More tuning tips are available on [https://lightgbm.readthedocs.io/en/latest/Par
 env name|required|default|description
 --------|--------|-------|-----------
 OBJECTIVE|True|regression|Currently `regression` and `binary` applications are supported. <br>Must be one of `[regression, regression_l1, huber, fair, poisson, quantile, mape, gamma, tweedie, binary, multiclass, multiclassova]`.
+IS_CLASSIFICATION|False|True|If `True`, classification, else regression.
 BOOSTING|True|gbdt|Must be one of `[gbdt, rf]`
 NUM_ITERATIONS|True|100|Number of boosting iterations. constraints: `NUM_ITERATIONS >= 0`
 LEARNING_RATE|True|0.05|Shrinkage rate. constraints: `LEARNING_RATE > 0.0`
