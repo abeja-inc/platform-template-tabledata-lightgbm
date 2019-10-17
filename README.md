@@ -55,3 +55,20 @@ METRIC_FREQ|False|1|Frequency for metric output. constraints: `METRIC_FREQ > 0`
 NFOLD|False|5|Number of folds in CV.
 VERBOSE_EVAL|False|None|Whether to display the progress. If None, progress will be displayed when np.ndarray is returned. If True, progress will be displayed at every boosting stage. If int, progress will be displayed at every given verbose_eval boosting stage.
 STRATIFIED|False|True|Whether to perform stratified sampling.
+
+
+## Run on local
+Use `requirements-local.txt`.
+
+```
+$ pip install -r requirements-local.txt
+```
+
+Set environment variables.
+
+| env | type | description |
+| --- | --- | --- |
+| ABEJA_ORGANIZATION_ID | str | Your organization ID. |
+| ABEJA_PLATFORM_USER_ID | str | Your user ID. |
+| ABEJA_PLATFORM_PERSONAL_ACCESS_TOKEN | str | Your Access Token. |
+| DATASET_ID | str | Dataset ID. |
