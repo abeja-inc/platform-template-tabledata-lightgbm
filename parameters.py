@@ -157,3 +157,16 @@ class Parameters:
         ]:
             rtn.pop(key, None)
         return rtn
+
+    @classmethod
+    def as_env(cls):
+        rtn = dict()
+        for k, v in cls.as_dict().items():
+            if v:
+                if isinstance(v, list):
+                    rtn[k] = ",".join(v)
+                elif isinstance(v, str):
+                    rtn[k] = v
+                else:
+                    rtn[k] = str(v)
+        return rtn
