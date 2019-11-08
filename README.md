@@ -71,4 +71,6 @@ Set environment variables.
 | ABEJA_ORGANIZATION_ID | str | Your organization ID. |
 | ABEJA_PLATFORM_USER_ID | str | Your user ID. |
 | ABEJA_PLATFORM_PERSONAL_ACCESS_TOKEN | str | Your Access Token. |
-| DATASET_ID | str | Dataset ID. |
+
+## For Jupyter Notebook
+Use `train_notebook.ipynb`.
