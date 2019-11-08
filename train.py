@@ -24,7 +24,7 @@ INPUT_FIELDS = Parameters.INPUT_FIELDS
 LABEL_FIELD = Parameters.LABEL_FIELD
 PARAMS = Parameters.as_params()
 
-STRATIFIED = True if Parameters.STRATIFIED and Parameters.IS_CLASSIFICATION else False
+STRATIFIED = Parameters.STRATIFIED and Parameters.IS_CLASSIFICATION
 IS_MULTI = Parameters.OBJECTIVE.startswith("multi")
 
 statistics = Statistics(Parameters.NUM_ITERATIONS)
