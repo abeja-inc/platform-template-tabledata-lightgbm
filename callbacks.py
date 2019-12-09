@@ -83,6 +83,7 @@ class TensorBoardCallback(object):
         self.writer.add_scalar('main/loss', epoch_train_loss, epoch + 1)
         self.writer.add_scalar('test/acc', epoch_val_acc, epoch + 1)
         self.writer.add_scalar('test/loss', epoch_val_loss, epoch + 1)
+        self.writer.flush()
 
     def set_valid(self, X_val, y_val, is_classification: bool, is_multi: bool, num_class: int):
         self._X_val = X_val
