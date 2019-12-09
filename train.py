@@ -73,6 +73,7 @@ def handler(context):
     lgb_env = open(os.path.join(ABEJA_TRAINING_RESULT_DIR, 'lgb_env.json'), 'w')
     json.dump(di, lgb_env)
     lgb_env.close()
+    writer.close()
 
 
 if __name__ == '__main__':
